@@ -38,7 +38,7 @@
       path = getDirectory("macros")+"SEMtoDomains.ijm";
       if (!File.exists(path))
           exit("\"Find CNT Domains\" not found in ImageJ/macros/.");
-      eval(path);
+      runMacro(path);
   }
 
   // This example macro demonstrates how to create a
@@ -50,6 +50,12 @@
      saveAs("Jpeg");
   }
 
+  macro "Scale Zeiss SEM image... [z]" {
+     path = getDirectory("macros")+"ZeissSEMScale.ijm";
+      if (!File.exists(path))
+          exit("\"ZeissSEMScale\" not found in ImageJ/macros/.");
+      runMacro(path);
+  }
 
 
 
