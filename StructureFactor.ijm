@@ -1,3 +1,7 @@
+// Calculates the structure factor (q) and saves result in .xls file with same name and path as image.
+// Before running, select the ROI you want to analyze and save it as the first entry in the ROI manager.
+// The image will be saved as a TIFF with the analyzed ROI drawn. If original image is a TIFF, it will be overwritten.
+
 
 //path for saving output files
 path = getDirectory("image");
@@ -5,10 +9,8 @@ imgnamefull = getInfo("image.filename");
 imgnamearray = split(imgnamefull, ".");
 imgname = imgnamearray[0]
 
-//crop 10x images. I just rigged this!
-//makeRectangle(0, 936, 2466, 2412);
-//run("Crop");
-
+//selects the ROI
+roiManager("Select", 0);
 
 run("Subtract...", "value=1");
 run("8-bit");
@@ -34,5 +36,5 @@ run("Draw")
 saveAs("Tiff", path + imgname + ".tif")
 
 //CLOSE EVERYTHING
-//run("Close");
-//close("*");
+run("Close");
+close("*");
