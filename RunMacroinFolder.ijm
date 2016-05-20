@@ -1,14 +1,17 @@
+//Pick Macro
+macropath = File.openDialog("Select a Marco to apply to every image in the folder");
+
 //Get path
 input = getDirectory("Choose image file location");
 list = getFileList(input);
 //print(list[0]);
 
-macropath = File.openDialog("Select a Marco to apply to every image in the folder");
+
 
 
 
 first = true;
-setBatchMode(false);
+setBatchMode(true);
 for (i=0; i<list.length; i++){
 	path = input + list[i];
 	showProgress(i, list.length);	

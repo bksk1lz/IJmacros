@@ -1,30 +1,19 @@
 //Default parameter values
 Ksegs = 4;//Number of segments for k-mean clustering
-binIter = 5;//Number of iterations for binary erosion and dilation
-binCount = 1;//Minimum number of exposed sides required to delete a pixel in erosion
+binIter = 25;//Number of iterations for binary erosion and dilation
+binCount = 4;//Minimum number of exposed sides required to delete a pixel in erosion
 semID = getImageID();
-TensorWin = 5;//Size of orientation tensor window in pixels
+TensorWin = 10;//Size of orientation tensor window in pixels
 minCirc = 0.05;//Minimum circularity of a domain
 minSize = 1000;//Minimum size of a domain in pixels
-CohThresh = 25;//Minimum coherency to retain a domain - mean gray of rgb image
+CohThresh = 35;//Minimum coherency to retain a domain - mean gray of rgb image
 
-//Make a dialog box to change values
-Dialog.create("Ben's domain segmenter");
-Dialog.addNumber("OrientationJ tensor window size (pixels)", TensorWin);
-Dialog.addNumber("Number of Clusters", Ksegs);
-Dialog.addNumber("Binary Iterations", binIter);
-Dialog.addNumber("Binary Count", binCount);
-Dialog.addNumber("Minimum domain circularity", minCirc);
-Dialog.addNumber("Minimum domain size (px)", minSize);
-Dialog.addNumber("Domain coherency threshold (mean gray)", CohThresh);
-Dialog.show();
-TensorWin = Dialog.getNumber();
-Ksegs = Dialog.getNumber();;
-binIter = Dialog.getNumber();;;
-binCount = Dialog.getNumber();;;;
-minCirc = Dialog.getNumber();;;;;
-minSize = Dialog.getNumber();;;;;;
-CohThresh = Dialog.getNumber();;;;;;;
+setBatchMode(false);
+
+//path for saving output files
+path = getDirectory("image");
+imgnamearray = split(getInfo("image.filename"), ".");
+imgname = imgnamearray[0]
 
 //Clear ROIs, results, and set result measurements
 roiManager("reset")
@@ -53,8 +42,6 @@ for (i=0; i<Ksegs; i++)  {
 	close(); //close mask
 	
 }
-//close(); // close cluster image
-//close(); // close color survey, now original SEM image is open
 
 //Measure color suvey
 run("Clear Results");
@@ -69,8 +56,7 @@ graytemp = newArray(1);
 numresults = roiManager("count");
 
 for (i=0; i<numresults; i++)  {
-	MeanGray = getResultString("Mean", i);
-	MeanGray = parseFloat(MeanGray);
+	MeanGray = getResult("Mean", i);
 	if(MeanGray<CohThresh)  {
 		Array.fill(graytemp, i);
 		deleteROIs = Array.concat(deleteROIs, graytemp);
@@ -97,13 +83,33 @@ run("Colors...", "foreground=orange");
 roiManager("Fill");
 run("Colors...", "foreground=green");
 roiManager("Draw");
+save(path + imgname + "_domains.png")
 
 //select original SEM image and measure orientation
 selectImage(semID)
 
-print("Results Start");
+run("Table...", "name=Table width=350 height=250");
+print("[Table]","\\Headings:X	Y	Area	Orientation	Coherency");
 for (i=0; i<roiManager("count"); i++)  {
 	roiManager("select", i);
 	run("Interpolate", "interval=1");
 	run("OrientationJ Measure", "sigma=0.0");
+	OresAr = split(getInfo("Log"));
+	//OresAr[15] is orientation (angles) and [16] is coherency (0-1)
+	print("[Table]", OresAr[10]+"	"+OresAr[11]+"	"+getResult("Area", i)+"	"+OresAr[15]+"	"+OresAr[16]);
+	selectWindow("Log");
+	run("Close");
 }
+
+//Save results then clear
+selectWindow("Table");
+saveAs("Text", path + imgname + ".xls");
+run("Close");
+
+//Clear ROI manager and results
+run("Clear Results");
+roiManager("reset");
+
+//Close all images
+
+close("*");

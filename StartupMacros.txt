@@ -33,6 +33,13 @@
           exit("\"About Startup Macros\" not found in ImageJ/macros/.");
       open(path);
   }
+  
+  macro "Run in folder..." {
+      path = getDirectory("macros")+"RunMacroinFolder.ijm";
+      if (!File.exists(path))
+          exit("\"About Startup Macros\" not found in ImageJ/macros/.");
+      runMacro(path);
+  }
 
   macro "Find CNT Domains" {
       path = getDirectory("macros")+"SEMtoDomains.ijm";
@@ -43,6 +50,13 @@
 
   macro "NASA Aggregates Enumerate" {
       path = getDirectory("macros")+"NasaMacro.ijm";
+      if (!File.exists(path))
+          exit("\"NasaMacro\" not found in ImageJ/macros/.");
+      runMacro(path);
+  }
+  
+  macro "Structure Factor... [s]" {
+      path = getDirectory("macros")+"StructureFactor.ijm";
       if (!File.exists(path))
           exit("\"NasaMacro\" not found in ImageJ/macros/.");
       runMacro(path);
