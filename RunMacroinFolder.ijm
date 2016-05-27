@@ -1,3 +1,6 @@
+// Simple macro which lets you pick any other macro,
+// and run it on every image in a folder.
+
 //Pick Macro
 macropath = File.openDialog("Select a Marco to apply to every image in the folder");
 
@@ -5,9 +8,6 @@ macropath = File.openDialog("Select a Marco to apply to every image in the folde
 input = getDirectory("Choose image file location");
 list = getFileList(input);
 //print(list[0]);
-
-
-
 
 
 first = true;
