@@ -61,6 +61,13 @@
           exit("\"NasaMacro\" not found in ImageJ/macros/.");
       runMacro(path);
   }
+  
+    macro "Crop and Rename... [c]" {
+      path = getDirectory("macros")+"cropandrename.ijm";
+      if (!File.exists(path))
+          exit("\"cropandrename\" not found in ImageJ/macros/.");
+      runMacro(path);
+  }
 
   // This example macro demonstrates how to create a
   // custom command with a keyboard shortcut.
@@ -72,11 +79,16 @@
   }
 
   macro "Scale Zeiss SEM image... [z]" {
-     path = getDirectory("macros")+"ZeissSEMScale.ijm";
+     path = getDirectory("macros")+"ZeissSEMScale_newSEMversion.ijm";
       if (!File.exists(path))
           exit("\"ZeissSEMScale\" not found in ImageJ/macros/.");
       runMacro(path);
   }
 
-
+macro "Crop and despeckle... [d]" {
+     path = getDirectory("macros")+"despeckle.ijm";
+      if (!File.exists(path))
+          exit("\"despeckle\" not found in ImageJ/macros/.");
+      runMacro(path);
+  }
 

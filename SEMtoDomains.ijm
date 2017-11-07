@@ -1,12 +1,12 @@
 //Default parameter values
 Ksegs = 4;//Number of segments for k-mean clustering
-binIter = 25;//Number of iterations for binary erosion and dilation
-binCount = 4;//Minimum number of exposed sides required to delete a pixel in erosion
+binIter = 20;//Number of iterations for binary erosion and dilation
+binCount = 1;//Minimum number of exposed sides required to delete a pixel in erosion
 semID = getImageID();
-TensorWin = 10;//Size of orientation tensor window in pixels
+TensorWin = 7;//Size of orientation tensor window in pixels
 minCirc = 0.05;//Minimum circularity of a domain
-minSize = 1000;//Minimum size of a domain in pixels
-CohThresh = 35;//Minimum coherency to retain a domain - mean gray of rgb image
+minSize = 7000;//Minimum size of a domain in pixels
+CohThresh = 75;//Minimum coherency to retain a domain - mean gray of rgb image
 
 setBatchMode(false);
 
@@ -23,12 +23,13 @@ run("Set Measurements...", "area mean centroid redirect=None decimal=3");
 // Run orientationj
 run("OrientationJ Analysis", "log=0.0 tensor=5 gradient=0 harris-index=on color-survey=on s-distribution=on hue=Orientation sat=Constant bri=Coherency ");
 selectWindow("Color-survey-1");
+run("Gaussian Blur...", "sigma=16");
 
 // Segment color survey
 run("k-means Clustering ...", "number_of_clusters=Ksegs cluster_center_tolerance=0.00010000 enable_randomization_seed randomization_seed=48");
 
 setOption("BlackBackground", false);
-run("Options...", "iterations=binIter count=binCount pad do=Nothing");
+
 
 // Pull out each cluster into a mask and do particle analysis
 for (i=0; i<Ksegs; i++)  {
@@ -36,8 +37,13 @@ for (i=0; i<Ksegs; i++)  {
 	run("Create Selection");
 	run("Create Mask");
 	//Binary processing of mask controled by binIter and binCount
-	run("Erode");
+    run("Options...", "iterations=binIter count=binCount pad do=Nothing");
+	run("Fill Holes");
+    run("Erode");
 	run("Dilate");
+    run("Options...", "iterations=40 count=4 pad do=Nothing");
+    run("Dilate");
+    run("Erode");
 	run("Analyze Particles...", "size=minSize-Infinity circularity=minCirc-1.00 display add");
 	close(); //close mask
 	
@@ -82,6 +88,7 @@ roiManager("Show All");
 run("Colors...", "foreground=orange");
 roiManager("Fill");
 run("Colors...", "foreground=green");
+run("Line Width...", "line=10");
 roiManager("Draw");
 save(path + imgname + "_domains.png")
 
