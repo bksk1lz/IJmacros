@@ -27,4 +27,6 @@ text = substring(tag,8,i1);
 //print(d2s(parseFloat(text) * 1e6,8));
 
 umPerPx = d2s(parseFloat(text) * 1e6, 8);
-run("Set Scale...", "distance=1 known="+umPerPx+" pixel=1 unit=um")
+run("Set Scale...", "distance=1 known="+umPerPx+" pixel=1 unit=um");
+
+print(umPerPx);

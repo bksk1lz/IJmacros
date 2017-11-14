@@ -1,7 +1,9 @@
 //Default parameter values
 Ksegs = 4;//Number of segments for k-mean clustering
-binIter = 20;//Number of iterations for binary erosion and dilation
-binCount = 1;//Minimum number of exposed sides required to delete a pixel in erosion
+binIter1 = 20;//Number of iterations for binary erosion and dilation original 20 40
+binIter2 = 40;
+binCount1 = 1;//Minimum number of exposed sides required to delete a pixel in erosion
+binCount2 = 4;
 semID = getImageID();
 TensorWin = 7;//Size of orientation tensor window in pixels
 minCirc = 0.05;//Minimum circularity of a domain
@@ -21,6 +23,7 @@ run("Clear Results");
 run("Set Measurements...", "area mean centroid redirect=None decimal=3");
 
 // Run orientationj
+run("Gaussian Blur...", "sigma=2");
 run("OrientationJ Analysis", "log=0.0 tensor=5 gradient=0 harris-index=on color-survey=on s-distribution=on hue=Orientation sat=Constant bri=Coherency ");
 selectWindow("Color-survey-1");
 run("Gaussian Blur...", "sigma=16");
@@ -37,11 +40,11 @@ for (i=0; i<Ksegs; i++)  {
 	run("Create Selection");
 	run("Create Mask");
 	//Binary processing of mask controled by binIter and binCount
-    run("Options...", "iterations=binIter count=binCount pad do=Nothing");
+    run("Options...", "iterations=binIter1 count=binCount1 pad do=Nothing");
 	run("Fill Holes");
     run("Erode");
 	run("Dilate");
-    run("Options...", "iterations=40 count=4 pad do=Nothing");
+    run("Options...", "iterations=binIter2 count=binCount2 pad do=Nothing");
     run("Dilate");
     run("Erode");
 	run("Analyze Particles...", "size=minSize-Infinity circularity=minCirc-1.00 display add");
@@ -92,11 +95,16 @@ run("Line Width...", "line=10");
 roiManager("Draw");
 save(path + imgname + "_domains.png")
 
+selectImage(semID);
+runMacro("ZeissSEMScale_newSEMversion.ijm");
+scaleVal = 1;
+toScaled(scaleVal);
+
 //select original SEM image and measure orientation
-selectImage(semID)
+
 
 run("Table...", "name=Table width=350 height=250");
-print("[Table]","\\Headings:X	Y	Area	Orientation	Coherency");
+print("[Table]","\\Headings:X	Y	Area	Orientation	Coherency	umperpx:"+scaleVal);
 for (i=0; i<roiManager("count"); i++)  {
 	roiManager("select", i);
 	run("Interpolate", "interval=1");
