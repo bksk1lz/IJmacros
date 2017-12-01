@@ -5,10 +5,10 @@ binIter2 = 40;
 binCount1 = 1;//Minimum number of exposed sides required to delete a pixel in erosion
 binCount2 = 4;
 semID = getImageID();
-TensorWin = 7;//Size of orientation tensor window in pixels
+//TensorWin = 7;//Size of orientation tensor window in pixels
 minCirc = 0.05;//Minimum circularity of a domain
 minSize = 7000;//Minimum size of a domain in pixels
-CohThresh = 75;//Minimum coherency to retain a domain - mean gray of rgb image
+CohThresh = 50;//Minimum coherency to retain a domain - mean gray of rgb image
 
 setBatchMode(false);
 
@@ -24,7 +24,7 @@ run("Set Measurements...", "area mean centroid redirect=None decimal=3");
 
 // Run orientationj
 run("Gaussian Blur...", "sigma=2");
-run("OrientationJ Analysis", "log=0.0 tensor=5 gradient=0 harris-index=on color-survey=on s-distribution=on hue=Orientation sat=Constant bri=Coherency ");
+run("OrientationJ Analysis", "log=0.0 tensor=10 gradient=0 harris-index=on color-survey=on s-distribution=on hue=Orientation sat=Constant bri=Coherency ");
 selectWindow("Color-survey-1");
 run("Gaussian Blur...", "sigma=16");
 
